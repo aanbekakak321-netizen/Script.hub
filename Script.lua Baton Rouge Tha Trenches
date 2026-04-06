@@ -1,0 +1,84 @@
+--// HUB
+
+local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+local Frame = Instance.new("Frame", ScreenGui)
+local Title = Instance.new("TextLabel", Frame)
+local Close = Instance.new("TextButton", Frame)
+local ToggleBtn = Instance.new("TextButton", Frame)
+
+Frame.Size = UDim2.new(0, 220, 0, 130)
+Frame.Position = UDim2.new(0, 100, 0, 200)
+Frame.BackgroundColor3 = Color3.fromRGB(25,25,25)
+Frame.Active = true
+Frame.Draggable = true
+
+Title.Size = UDim2.new(1, -40, 0, 30)
+Title.Position = UDim2.new(0, 10, 0, 0)
+Title.Text = "🔥Auto Money [Tutorial on YouTube]"
+Title.TextColor3 = Color3.new(1,1,1)
+Title.BackgroundTransparency = 1
+Title.TextXAlignment = Enum.TextXAlignment.Left
+
+Close.Size = UDim2.new(0, 30, 0, 30)
+Close.Position = UDim2.new(1, -30, 0, 0)
+Close.Text = "X"
+Close.BackgroundColor3 = Color3.fromRGB(170,0,0)
+Close.TextColor3 = Color3.new(1,1,1)
+
+ToggleBtn.Size = UDim2.new(1, -20, 0, 40)
+ToggleBtn.Position = UDim2.new(0, 10, 0, 50)
+ToggleBtn.Text = "Auto FARM: OFF"
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(40,40,40)
+ToggleBtn.TextColor3 = Color3.new(1,1,1)
+
+-- CLOSE
+Close.MouseButton1Click:Connect(function()
+    ScreenGui:Destroy()
+end)
+
+-- TOGGLE
+getgenv().AutoBag = false
+
+ToggleBtn.MouseButton1Click:Connect(function()
+    getgenv().AutoBag = not getgenv().AutoBag
+    ToggleBtn.Text = "Auto FARM: " .. (getgenv().AutoBag and "ON" or "OFF")
+end)
+
+local function IsInsideTarget(obj, targetName)
+    while obj.Parent do
+        obj = obj.Parent
+        if obj.Name == targetName then
+            return true
+        end
+    end
+    return false
+end
+
+-- MAIN
+task.spawn(function()
+    while task.wait(0.1) do
+        
+        for _, v in pairs(workspace:GetDescendants()) do
+            if v:IsA("ProximityPrompt") then
+                
+                if getgenv().AutoBag then
+                    -- hanya aktifkan BagSpawn & Throw
+                    if IsInsideTarget(v, "BagSpawn") or IsInsideTarget(v, "Throw") then
+                        v.Enabled = true
+                        v.MaxActivationDistance = 9999
+                        v.HoldDuration = 0
+                        
+                        fireproximityprompt(v)
+                    else
+                        v.Enabled = false
+                    end
+                else
+                    
+                    v.Enabled = true
+                end
+                
+            end
+        end
+        
+    end
+end)
